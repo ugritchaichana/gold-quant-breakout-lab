@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "project": {
+    "name": "gold-quant-breakout-lab",
+    "description": "Institutional Multi-Timeframe Volatility Breakout System for Gold (XAUUSD.iux)",
+    "version": "1.0.0",
+    "phase": 0,
+    "status": "PHASE_0_COMPLETED_BASELINE_ESTABLISHED",
+    "next_phase": "PHASE_1_ALPHA_REFINEMENT_AND_DRAWDOWN_COMPRESSION",
+    "repository_url": "https://github.com/ugritchaichana/gold-quant-breakout-lab"
+  },
+  "constraints": {
+    "symbol": "XAUUSD.iux",
+    "execution_delay_ms": 100,
+    "tick_modelling": "EVERY_TICK_BASED_ON_REAL_TICKS",
+    "spread_cap_usd": 0.60,
+    "circuit_breakers": {
+      "tier1_lot_halving_dd_pct": 5.0,
+      "tier2_delever_dd_pct": 10.0,
+      "tier3_terminal_freeze_dd_pct": 15.0
+    },
+    "testing_dates": {
+      "full_start": "2025-08-20",
+      "full_end": "2026-09-28",
+      "in_sample_end": "2026-06-15",
+      "out_of_sample_start": "2026-06-15",
+      "out_of_sample_end": "2026-09-28"
+    }
+  },
+  "empirical_benchmarks": {
+    "total_permutations_evaluated": 5041432,
+    "total_waves_processed": 650,
+    "champions": {
+      "pure_m15": {
+        "timeframe": "M15",
+        "donchian_window": 96,
+        "atr_trail_mult": 5.0,
+        "atr_stop_mult": 1.6,
+        "risk_pct": 3.0,
+        "min_adx": 18.0,
+        "max_bars_hold": 96,
+        "full_cagr_pct": 324.2,
+        "oos_forward_cagr_pct": 106.5,
+        "in_sample_cagr_pct": 500.5,
+        "max_drawdown_pct": -19.8,
+        "profit_factor": 2.13,
+        "recovery_factor": 16.3
+      },
+      "true_mtf_hybrid": {
+        "macro_timeframe": "PERIOD_H1",
+        "entry_timeframe": "PERIOD_M15",
+        "donchian_window": 80,
+        "atr_trail_mult": 4.2,
+        "atr_stop_mult": 1.4,
+        "risk_pct": 3.0,
+        "min_adx": 18.0,
+        "max_bars_hold": 144,
+        "full_cagr_pct": 241.3,
+        "oos_forward_cagr_pct": 157.2,
+        "in_sample_cagr_pct": 312.0,
+        "max_drawdown_pct": -18.0,
+        "profit_factor": 1.69,
+        "recovery_factor": 13.4
+      },
+      "baseline_h1": {
+        "timeframe": "H1",
+        "full_cagr_pct": 81.8,
+        "oos_forward_cagr_pct": 65.7,
+        "max_drawdown_pct": -21.8,
+        "profit_factor": 1.08,
+        "recovery_factor": 3.7
+      }
+    }
+  },
+  "database": {
+    "sqlite_path": "quant_vault.db",
+    "parquet_segments": [
+      "research_data/quant_vault_full.parquet.part01",
+      "research_data/quant_vault_full.parquet.part02"
+    ],
+    "top_champions_csv": "research_data/top_10000_champion_strategies.csv",
+    "restore_script": "research_data/restore_vault.py",
+    "table_name": "results",
+    "total_rows": 5041432,
+    "primary_indexes": [
+      "idx_tf_cagr",
+      "idx_cagr_dd",
+      "idx_oos_cagr",
+      "idx_full_pf",
+      "idx_donchian"
+    ]
+  },
+  "phase_1_targets": {
+    "target_cagr_pct_min": 180.0,
+    "target_max_drawdown_pct_max": 10.0,
+    "target_profit_factor_min": 2.20,
+    "target_sharpe_ratio_min": 2.50,
+    "focus_areas": [
+      "NON_LAGGING_REGIME_DETECTION_YANG_ZHANG_HURST",
+      "MICROSTRUCTURE_FALSE_BREAKOUT_VETO_TICK_VELOCITY",
+      "CONVEX_ASYMMETRIC_SIZING_FRACTIONAL_KELLY",
+      "MULTIPLE_TESTING_DATA_SNOOPING_DEFLATED_SHARPE"
+    ]
+  }
+}
