@@ -100,6 +100,52 @@ python research_data/restore_vault.py
 
 ---
 
+## 🔄 The 5-Stage Autonomous EA Lifecycle & Model Factory
+
+```mermaid
+flowchart TD
+    subgraph S1["Stage 1: Ideation & Alpha Formulation"]
+        A1["Market Anomaly Identification"]
+        A2["Regime Classifier (Yang-Zhang / Hurst / ATR Ratio)"]
+        A3["Mathematical Microstructure Veto"]
+    end
+
+    subgraph S2["Stage 2: Continuous Multi-Core Backtest & Validation"]
+        B1["12-Core Distributed Permutation Engine (5M+ Runs)"]
+        B2["Out-of-Sample Forward Split Validation"]
+        B3["Deflated Sharpe Ratio (DSR) & Overfitting Pruning"]
+    end
+
+    subgraph S3["Stage 3: Adaptive Model Selection & Rotation"]
+        C1["Regime-to-Model Matching (Trend Expansion vs Compression)"]
+        C2["Dynamic Parameter Matrix Selection (.set)"]
+        C3["Pareto Frontier Multi-Objective Optimization (CAGR vs DD)"]
+    end
+
+    subgraph S4["Stage 4: Automated CI/CD Compilation & Deployment"]
+        D1["Native MQL5 Source Build (0 Errors, 0 Warnings)"]
+        D2["Terminal Deployment to MT5 Experts Directory"]
+        D3["Headless MT5 Strategy Tester Live Audit"]
+    end
+
+    subgraph S5["Stage 5: Multi-Asset CFD Expansion"]
+        E1["Universal Point/Tick Normalization Layer"]
+        E2["Cross-Asset Volatility Parity Sizing"]
+        E3["Portfolio Diversification across Gold, Indices, Energy"]
+    end
+
+    S1 --> S2 --> S3 --> S4 --> S5
+```
+
+### 🌍 Multi-Asset CFD Expansion Spectrum (Future Scope)
+While our current anchor is **Gold (`XAUUSD.iux`)**, the architecture features a universal instrument normalization layer designed for seamless multi-asset CFD deployment:
+- **US Tech 100 (`NAS100` / `USTEC`):** Persistent intraday momentum during the US Cash Open (14:30 UTC).
+- **Wall Street 30 (`US30` / `DJ30`):** Institutional trend continuation across NY trading sessions.
+- **Crude Oil (`USOIL` / `WTI`):** Geopolitical regime swings, extreme fat-tailed volatility ideal for Chandelier trailing stops.
+- **Forex High-Beta Crosses (`GBPJPY`):** Volatile breakouts with large directional extensions.
+
+---
+
 ## 🔮 Phase 1 Roadmap (Next Quantitative Frontiers)
 
 With Phase 0 successfully completed, **Phase 1** focuses on pushing the system beyond conventional technical indicators to achieve **Max Drawdown $< 10.0\%$**:
@@ -113,3 +159,4 @@ With Phase 0 successfully completed, **Phase 1** focuses on pushing the system b
 
 ## 📜 License & Disclaimer
 This repository is published for quantitative research and educational purposes. Past performance under backtesting with 100ms delay and real ticks does not guarantee future financial returns. Always deploy strict risk management.
+
