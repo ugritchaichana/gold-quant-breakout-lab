@@ -130,6 +130,37 @@
         "profit_factor": 1.69,
         "recovery_factor": 13.4
       }
+    },
+    "oos_isolated_3_5months_forward_validation": {
+      "period": "2026-06-15 to 2026-09-28",
+      "total_bars_m15": 7208,
+      "report_file": "research_data/FORWARD_TEST_3MONTHS_REPORT.md",
+      "trade_log_file": "research_data/forward_test_3months_rank1_trades.csv",
+      "pure_m15_rank1": {
+        "initial_deposit_usd": 10000.0,
+        "final_balance_usd": 24264.07,
+        "net_return_pct": 142.64,
+        "annualized_cagr_pct": 2011.9,
+        "profit_factor": 2.80,
+        "win_rate_pct": 58.33,
+        "max_drawdown_pct": -21.6,
+        "total_trades": 36,
+        "payoff_ratio": 2.00,
+        "status": "VALIDATED_EXTREME_ALPHA"
+      },
+      "true_mtf_hybrid": {
+        "initial_deposit_usd": 10000.0,
+        "final_balance_usd": 14994.48,
+        "net_return_pct": 49.94,
+        "annualized_cagr_pct": 411.3,
+        "profit_factor": 3.17,
+        "win_rate_pct": 50.00,
+        "max_drawdown_pct": -16.5,
+        "total_trades": 12,
+        "payoff_ratio": 3.17,
+        "status": "VALIDATED_LOWER_DRAWDOWN"
+      },
+      "verdict": "Core momentum alpha confirmed across 105 days unseen data. Phase 1 objective focused on reducing Rank 1 drawdown from -21.6% to < -10%."
     }
   }
 }
