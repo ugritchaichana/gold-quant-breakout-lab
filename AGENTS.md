@@ -5,12 +5,17 @@
 
 ---
 
-## 1. REPOSITORY CORE METADATA
+## 1. REPOSITORY CORE METADATA & MASTER VISION
 ```yaml
 project_name: "gold-quant-breakout-lab"
-asset: "XAUUSD.iux"
-market_type: "Spot Gold / CFD"
+primary_asset: "XAUUSD.iux" (Spot Gold / CFD)
+future_cfd_assets: ["NAS100", "US30", "USOIL", "GBPJPY"]
 target_environment: "MetaTrader 5 (MQL5) Build 4000+"
+long_term_vision: >
+  Build a 100% autonomous, end-to-end quantitative EA lifecycle platform.
+  Continuously research, stress-test, and dynamically rotate the optimal trading model
+  tailored to the prevailing market regime. Focus first on Gold (XAUUSD), then expand
+  to trend-friendly, high-volatility CFD instruments.
 testing_horizon:
   start_date: "2025.08.20"
   end_date: "2026.09.28"
@@ -24,12 +29,90 @@ immutable_constraints:
     tier1_drawdown_percent: 5.0  # Cut lot size by 50%
     tier2_drawdown_percent: 10.0 # Liquidate open positions
     tier3_drawdown_percent: 15.0 # Emergency shutdown / freeze
-current_milestone: "Phase 0 Completed (Setup & 5M Baseline) -> Entering Phase 1 (Alpha Refinement)"
+milestone_state:
+  phase_0: "COMPLETED (Setup, 12-Core Multi-TF Ingestion, 5.04M Combinations Baseline, SQLite Vault, Dashboard)"
+  phase_1: "ACTIVE (Alpha Engineering, False-Breakout Vetoes, Drawdown Compression < 10% with Claude Opus 5.5)"
+  phase_2: "PLANNED (Adaptive Regime Routing & Dynamic Walk-Forward Model Rotation)"
+  phase_3: "PLANNED (Automated CI/CD Compilation, MT5 Deployment & Live Execution Sync)"
+  phase_4: "PLANNED (Multi-Asset CFD Expansion: NAS100, USOIL, US30)"
 ```
 
 ---
 
-## 2. FILE TREE & ARCHITECTURAL PURPOSES
+## 2. THE 5-STAGE END-TO-END QUANT EA LIFECYCLE
+
+```mermaid
+flowchart TD
+    subgraph S1["Stage 1: Ideation & Alpha Formulation"]
+        A1["Market Anomaly Identification"]
+        A2["Regime Classifier (Yang-Zhang / Hurst / ATR Ratio)"]
+        A3["Mathematical Microstructure Veto"]
+    end
+
+    subgraph S2["Stage 2: Continuous Multi-Core Backtest & Validation"]
+        B1["12-Core Distributed Permutation Engine (5M+ Runs)"]
+        B2["Out-of-Sample Forward Split Validation"]
+        B3["Deflated Sharpe Ratio (DSR) & Overfitting Pruning"]
+    end
+
+    subgraph S3["Stage 3: Adaptive Model Selection & Rotation"]
+        C1["Regime-to-Model Matching (Trend Expansion vs Compression)"]
+        C2["Dynamic Parameter Matrix Selection (.set)"]
+        C3["Pareto Frontier Multi-Objective Optimization (CAGR vs DD)"]
+    end
+
+    subgraph S4["Stage 4: Automated CI/CD Compilation & Deployment"]
+        D1["Native MQL5 Source Build (0 Errors, 0 Warnings)"]
+        D2["Terminal Deployment to MT5 Experts Directory"]
+        D3["Headless MT5 Strategy Tester Live Audit"]
+    end
+
+    subgraph S5["Stage 5: Multi-Asset CFD Expansion"]
+        E1["Universal Point/Tick Normalization Layer"]
+        E2["Cross-Asset Volatility Parity Sizing"]
+        E3["Portfolio Diversification across Gold, Indices, Energy"]
+    end
+
+    S1 --> S2 --> S3 --> S4 --> S5
+```
+
+---
+
+## 3. MULTI-ASSET CFD PORTABILITY SPECIFICATIONS
+
+When engineering MQL5 code and Python optimization scripts, **NEVER hardcode asset-specific constants**. Always adhere to the **Universal Instrument Normalization Protocol**:
+
+```mql5
+//+------------------------------------------------------------------+
+//| Universal Asset Normalization Helper                              |
+//+------------------------------------------------------------------+
+double CalculateNormalizedRiskLots(string symbol, double risk_usd, double sl_distance_price)
+{
+   double tick_size  = SymbolInfoDouble(symbol, SYMBOL_TRADE_TICK_SIZE);
+   double tick_value = SymbolInfoDouble(symbol, SYMBOL_TRADE_TICK_VALUE);
+   double step_lot   = SymbolInfoDouble(symbol, SYMBOL_VOLUME_STEP);
+   double min_lot    = SymbolInfoDouble(symbol, SYMBOL_VOLUME_MIN);
+   double max_lot    = SymbolInfoDouble(symbol, SYMBOL_VOLUME_MAX);
+   
+   if(tick_size <= 0 || tick_value <= 0 || sl_distance_price <= 0) return min_lot;
+   
+   double sl_ticks = sl_distance_price / tick_size;
+   double raw_lots = risk_usd / (sl_ticks * tick_value);
+   
+   double lots = MathFloor(raw_lots / step_lot) * step_lot;
+   return MathMax(min_lot, MathMin(max_lot, lots));
+}
+```
+
+### Target CFD Expansion Spectrum:
+1. **Gold (`XAUUSD.iux`) [Current Anchor]:** High volatility, extreme fat tails ($\alpha \approx 3.0$), institutional breakout momentum.
+2. **US Tech 100 (`NAS100` / `USTEC`):** Strong persistent intra-day momentum, US cash open expansion (14:30 UTC), high sensitivity to Donchian rolling channels.
+3. **Wall Street 30 (`US30` / `DJ30`):** Steady institutional trend follow-through during NY session.
+4. **Crude Oil (`USOIL` / `WTI`):** Geopolitical regime swings, volatility clustering, optimal for Chandelier trailing stops.
+
+---
+
+## 4. CURRENT FILE TREE & PURPOSES
 
 ```text
 /
@@ -58,27 +141,7 @@ current_milestone: "Phase 0 Completed (Setup & 5M Baseline) -> Entering Phase 1 
 
 ---
 
-## 3. MQL5 ARCHITECTURE & STATE MACHINE (`Master_Gold_Breakout_EA.mq5`)
-
-### Execution Flowchart
-```mermaid
-stateDiagram-v2
-    [*] --> OnTick
-    OnTick --> CheckCircuitBreakers: Every Tick
-    CheckCircuitBreakers --> Tier3Freeze: DD >= 15%
-    CheckCircuitBreakers --> Tier2Liquidate: DD >= 10%
-    CheckCircuitBreakers --> CheckNewBar: DD < 10%
-    
-    CheckNewBar --> ManageOpenPosition: Has Open Position
-    CheckNewBar --> EvaluateEntry: No Open Position
-    
-    ManageOpenPosition --> ChandelierTrailing: PeakPrice - (ATRTrailMult * ATR)
-    ManageOpenPosition --> StagnationExit: BarsHeld >= MaxBarsHold && Gain < 0.5*ATR
-    ManageOpenPosition --> RegimeExit: Price < Macro EMA200
-    
-    EvaluateEntry --> ValidateFilters: Spread <= $0.60
-    ValidateFilters --> ExecuteBuy: Breakout && Trend && Momentum
-```
+## 5. MQL5 ARCHITECTURE & STATE MACHINE (`Master_Gold_Breakout_EA.mq5`)
 
 ### Critical MQL5 Functions & Invariants
 - `OnInit()`: Binds indicators on `InpMacroTimeframe` (H1: ATR14, ADX14, EMA200, EMA800).
@@ -97,58 +160,9 @@ stateDiagram-v2
 
 ---
 
-## 4. DATABASE SCHEMA (`quant_vault.db` & Parquet)
+## 6. INSTRUCTIONS FOR INCOMING AI AGENTS (HOW TO EXECUTE)
 
-Table name: `results`
-
-| Column | Type | Description |
-| :--- | :---: | :--- |
-| `timeframe` | `TEXT` | `M15`, `M30`, or `H1` |
-| `donchian` | `INTEGER` | Channel lookback bars ($10 - 120$) |
-| `atr_trail` | `REAL` | Trailing stop multiplier ($2.0 - 6.0$) |
-| `atr_stop` | `REAL` | Initial stop multiplier ($1.0 - 3.0$) |
-| `risk` | `REAL` | Account risk fraction ($0.01 - 0.05$) |
-| `min_adx` | `REAL` | Minimum ADX momentum floor ($15.0 - 30.0$) |
-| `max_hold` | `INTEGER` | Stagnation bar limit ($48 - 192$) |
-| `is_cagr` | `REAL` | In-Sample CAGR fraction (e.g. `5.005` = +500.5%) |
-| `is_dd` | `REAL` | In-Sample Max Drawdown (e.g. `-0.198` = -19.8%) |
-| `is_pf` | `REAL` | In-Sample Profit Factor |
-| `oos_cagr` | `REAL` | Out-Of-Sample Forward CAGR (Recent 3.5 months) |
-| `oos_dd` | `REAL` | Out-Of-Sample Max Drawdown |
-| `oos_pf` | `REAL` | Out-Of-Sample Profit Factor |
-| `full_cagr` | `REAL` | Full 1-Year CAGR across entire window |
-| `full_dd` | `REAL` | Full 1-Year Max Drawdown |
-| `full_pf` | `REAL` | Full 1-Year Profit Factor |
-| `trades` | `INTEGER` | Total executed trade count |
-
----
-
-## 5. REPRODUCIBLE AGENT CLI COMMANDS
-
-### Rebuild SQLite Vault from Git Segments:
-```bash
-python research_data/restore_vault.py
-```
-
-### Launch Interactive Web Dashboard:
-```bash
-python -m streamlit run app_dashboard.py --server.port 8501 --server.headless true
-```
-
-### Run 12-Core Continuous Optimization Wave:
-```bash
-python continuous_quant_engine.py
-```
-
-### Run Deterministic 3-Way Showdown Verification:
-```bash
-python run_3way_showdown.py
-```
-
----
-
-## 6. INSTRUCTIONS FOR INCOMING AI AGENTS (HOW TO CONTRIBUTE)
-
-1. **Never alter immutable constraints:** 100ms latency, real ticks, 5%/10%/15% circuit breakers, and spread cap ($0.60) must remain fixed to avoid curve-fitting illusions.
-2. **Phase 1 Objective:** Reduce Max Drawdown from current $18-20\%$ down to **$< 10.0\%$** while sustaining **CAGR $> 180\%$**.
-3. **Integrating New Alpha:** When introducing non-lagging regime indicators (e.g., Yang-Zhang, Hurst Exponent) or order-flow vetoes, write modular native MQL5 functions with zero external DLL dependencies.
+1. **Phase 1 Objective:** Reduce Max Drawdown from current $18-20\%$ down to **$< 10.0\%$** while sustaining **CAGR $> 180\%$**.
+2. **Deterministic Reproducibility:** Every backtest must use the locked 1-year window (`2025.08.20 - 2026.09.28`), 100ms broker delay, and real ticks.
+3. **Zero DLL Policy:** Maintain 100% native MQL5 execution for universal VPS and cloud compatibility.
+4. **Adaptive Rotation Design:** When introducing new models, ensure parameter schemas allow dynamic switching based on market regime detection.

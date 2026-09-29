@@ -2,15 +2,83 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "project": {
     "name": "gold-quant-breakout-lab",
-    "description": "Institutional Multi-Timeframe Volatility Breakout System for Gold (XAUUSD.iux)",
-    "version": "1.0.0",
-    "phase": 0,
-    "status": "PHASE_0_COMPLETED_BASELINE_ESTABLISHED",
+    "description": "Institutional Multi-Timeframe Volatility Breakout & Full-Lifecycle Model Factory for Gold (XAUUSD.iux) and Liquid CFDs",
+    "version": "1.1.0",
+    "vision": "100% autonomous quantitative EA lifecycle platform. Continuously research, stress-test, and dynamically rotate the optimal trading model tailored to the prevailing market regime across Gold and CFD instruments.",
+    "current_phase": 0,
+    "current_status": "PHASE_0_COMPLETED_BASELINE_ESTABLISHED",
     "next_phase": "PHASE_1_ALPHA_REFINEMENT_AND_DRAWDOWN_COMPRESSION",
     "repository_url": "https://github.com/ugritchaichana/gold-quant-breakout-lab"
   },
-  "constraints": {
-    "symbol": "XAUUSD.iux",
+  "asset_matrix": {
+    "anchor_asset": {
+      "symbol": "XAUUSD.iux",
+      "type": "Commodity / Precious Metal Spot CFD",
+      "status": "ACTIVE_PRODUCTION",
+      "target_timeframe": "M15 (Entry) / H1 (Macro)",
+      "spread_cap_usd": 0.60
+    },
+    "future_expansion_cfds": [
+      {
+        "symbol": "NAS100",
+        "type": "Equity Index CFD",
+        "rationale": "High persistent intra-day momentum during US cash open (14:30 UTC), optimal for Donchian breakouts",
+        "status": "PLANNED_PHASE_4"
+      },
+      {
+        "symbol": "US30",
+        "type": "Equity Index CFD",
+        "rationale": "Strong institutional session trend continuation",
+        "status": "PLANNED_PHASE_4"
+      },
+      {
+        "symbol": "USOIL",
+        "type": "Energy Commodity CFD",
+        "rationale": "Geopolitical macro trends, high volatility clustering ideal for Chandelier trailing",
+        "status": "PLANNED_PHASE_4"
+      },
+      {
+        "symbol": "GBPJPY",
+        "type": "Forex Cross CFD",
+        "rationale": "High beta, volatile breakout follow-through",
+        "status": "PLANNED_PHASE_4"
+      }
+    ]
+  },
+  "lifecycle_milestones": {
+    "phase_0": {
+      "name": "Infrastructure, Continuous Optimization & 5M Baseline",
+      "status": "COMPLETED",
+      "records_evaluated": 5041432,
+      "champions_identified": true,
+      "sqlite_vault_deployed": true,
+      "web_dashboard_deployed": true
+    },
+    "phase_1": {
+      "name": "Alpha Refinement, False-Breakout Veto & Drawdown Compression (< 10%)",
+      "status": "ACTIVE",
+      "target_cagr_min": 180.0,
+      "target_max_dd_ceiling": 10.0,
+      "target_profit_factor_min": 2.20,
+      "collaborator": "Claude Opus 5.5 via CLAUDE_OPUS_MASTER_PROMPT.md"
+    },
+    "phase_2": {
+      "name": "Adaptive Regime Classifier & Walk-Forward Model Rotation Engine",
+      "status": "PLANNED",
+      "description": "Dynamic switching between trend-expansion models and volatility-compression models based on real-time market regime"
+    },
+    "phase_3": {
+      "name": "Automated CI/CD Compilation, MT5 Deployment & Live Execution Sync",
+      "status": "PLANNED",
+      "description": "Headless automated compilation and hot-reloading of presets in active MT5 terminals"
+    },
+    "phase_4": {
+      "name": "Multi-Asset CFD Expansion (NAS100, USOIL, US30)",
+      "status": "PLANNED",
+      "description": "Universal contract normalization and cross-asset portfolio allocation"
+    }
+  },
+  "immutable_constraints": {
     "execution_delay_ms": 100,
     "tick_modelling": "EVERY_TICK_BASED_ON_REAL_TICKS",
     "spread_cap_usd": 0.60,
@@ -61,45 +129,7 @@
         "max_drawdown_pct": -18.0,
         "profit_factor": 1.69,
         "recovery_factor": 13.4
-      },
-      "baseline_h1": {
-        "timeframe": "H1",
-        "full_cagr_pct": 81.8,
-        "oos_forward_cagr_pct": 65.7,
-        "max_drawdown_pct": -21.8,
-        "profit_factor": 1.08,
-        "recovery_factor": 3.7
       }
     }
-  },
-  "database": {
-    "sqlite_path": "quant_vault.db",
-    "parquet_segments": [
-      "research_data/quant_vault_full.parquet.part01",
-      "research_data/quant_vault_full.parquet.part02"
-    ],
-    "top_champions_csv": "research_data/top_10000_champion_strategies.csv",
-    "restore_script": "research_data/restore_vault.py",
-    "table_name": "results",
-    "total_rows": 5041432,
-    "primary_indexes": [
-      "idx_tf_cagr",
-      "idx_cagr_dd",
-      "idx_oos_cagr",
-      "idx_full_pf",
-      "idx_donchian"
-    ]
-  },
-  "phase_1_targets": {
-    "target_cagr_pct_min": 180.0,
-    "target_max_drawdown_pct_max": 10.0,
-    "target_profit_factor_min": 2.20,
-    "target_sharpe_ratio_min": 2.50,
-    "focus_areas": [
-      "NON_LAGGING_REGIME_DETECTION_YANG_ZHANG_HURST",
-      "MICROSTRUCTURE_FALSE_BREAKOUT_VETO_TICK_VELOCITY",
-      "CONVEX_ASYMMETRIC_SIZING_FRACTIONAL_KELLY",
-      "MULTIPLE_TESTING_DATA_SNOOPING_DEFLATED_SHARPE"
-    ]
   }
 }
