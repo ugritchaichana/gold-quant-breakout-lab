@@ -1,0 +1,25 @@
+# Large Database Files (> 100MB blocked by GitHub)
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+continuous_optimization_database.csv
+master_optimization_database.csv
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+
+# Logs & Temporary files
+*.log
+data/
+*.tmp
+*.bak
+
+# OS
+Thumbs.db
+.DS_Store
