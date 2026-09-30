@@ -1,0 +1,12 @@
+; 10-Year Champion Preset for Oil Trend (USOIL)
+; Stress-Tested across 2016-2026 under +50% Adverse Friction
+InpMagicNumber=100401
+InpTradeComment=M4_OIL
+InpRiskPct=0.25
+InpAccountBasePool=25000.0
+InpDonchianWindow=15
+InpATRStopMult=1.6
+InpATRTrailMult=3.5
+InpTP_R=1.25
+InpBE_R=1.0
+InpMinKER=0.03
