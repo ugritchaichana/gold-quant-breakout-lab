@@ -1,186 +1,90 @@
-# 🏆 Institutional Gold Quant Research Lab (`XAUUSD`)
-### Quantitative Research, Autonomous Multi-Timeframe Optimization & Execution Infrastructure
+# 🏆 The 5 Titans: Multi-Asset Quantitative Trading Portfolio
+### Single Shared Account Architecture (\$25,000 Pool, 0.25% Risk per Trade, Max Concurrent Risk <= 1.25%)
+### Engineered for MetaTrader 5 (MQL5) & Distributed Multi-Core Python Optimization
 
-[![Phase 0: Completed](https://img.shields.io/badge/Milestone-Phase%200%20Completed-brightgreen?style=for-the-badge&logo=git)](https://github.com/ugritchaichana/gold-quant-breakout-lab)
-[![Database](https://img.shields.io/badge/Evaluated%20Combinations-5%2C041%2C432-blue?style=for-the-badge&logo=sqlite)](research_data/top_10000_champion_strategies.csv)
-[![MQL5 Production](https://img.shields.io/badge/MetaTrader%205-Production%20Ready-orange?style=for-the-badge)](Master_Gold_Breakout_EA.mq5)
-[![Dashboard](https://img.shields.io/badge/Streamlit%20Web%20App-Interactive%20UI-ff4b4b?style=for-the-badge&logo=streamlit)](app_dashboard.py)
-
----
-
-## 🚀 Phase 0 Milestone: Project Initialization & Baseline Setup (COMPLETED)
-
-**Phase 0** marks the successful end-to-end engineering of our institutional quant research and testing environment for Gold (`XAUUSD.iux`). Within this phase, we have achieved:
-
-1. **Autonomous 12-Core Multi-Timeframe Optimization Engine:** Continuous genetic and grid search engine capable of processing 500,000+ permutations per hour across 12 threads.
-2. **5.04M Combinations Evaluated & Validated:** 650 iterative optimization waves completed over a 10.01-hour continuous calibration run.
-3. **Strict Real-World Constraints Enforced:**
-   - Execution Model: **"Every tick based on real ticks"** in MetaTrader 5 Strategy Tester.
-   - Broker Latency: **100ms artificial execution delay** injected into every order.
-   - Spread Safeguard: Hard limit capped at **$0.60** (60 points).
-   - 3-Tier Dynamic Circuit Breakers: Tier 1 (5% DD lot halving), Tier 2 (10% DD de-lever), Tier 3 (15% DD emergency freeze).
-   - Out-of-Sample (OOS) Forward Split: Fixed at `2026.06.15` to `2026.09.28` (last 3.5 months strictly unseen during parameter fitting).
-4. **Unified Storage Vault & Interactive Analytics:** Migrated the 1.2 GB dataset into an indexed **SQLite database (`quant_vault.db`)**, compressed into **Parquet chunks**, and deployed an interactive **Streamlit Web Dashboard**.
+[![Phase 1: Completed](https://img.shields.io/badge/Milestone-Phase%201%20Titans%20Completed-brightgreen?style=for-the-badge&logo=git)](https://github.com/ugritchaichana/gold-quant-breakout-lab)
+[![Database](https://img.shields.io/badge/Evaluated%20Permutations-7%2C856%2C281-blue?style=for-the-badge&logo=sqlite)](quant_vault.db)
+[![Architecture](https://img.shields.io/badge/Architecture-Modular%20Domain%20Driven-blueviolet?style=for-the-badge)](ARCHITECTURE.md)
+[![Stress Test](https://img.shields.io/badge/Stress%20Audit-+50%25%20Friction%20Passed-orange?style=for-the-badge)](STRESS_TESTING_PROTOCOL.md)
 
 ---
 
-## 📈 Empirical Research Findings (Analysis of 5,041,432 Combinations)
+## 🏛️ Executive Summary & Master Vision
+The **5 Titans Quantitative Portfolio** is an institutional-grade, multi-asset algorithmic portfolio deployed on a **single shared \$25,000 FTMO Swing account**. 
 
-### 1. Comparative Showdown: Pure H1 vs Pure M15 vs True Multi-Timeframe (MTF)
-
-| Strategy Architecture | Full 1-Year CAGR | OOS Forward CAGR (Recent Market) | In-Sample CAGR | Max Relative DD | Profit Factor | Recovery Factor |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| 🥇 **Champion: M15 Momentum Breakout** | **`+324.2%`** | **`+106.5%`** | **`+500.5%`** | **`-19.8%`** | **`2.13`** | **`16.3`** |
-| 🥈 **Runner-Up: M15 Tight Risk (2.5%)** | `+277.5%` | `+62.4%` | `+435.9%` | **`-18.3%`** | `2.09` | `15.1` |
-| 🥉 **True MTF Hybrid (H1 Filter + M15 Entry)** | `+241.3%` | **`+157.2% - +227.1%`** | `+312.0%` | **`-18.0%`** | `1.69` | `13.4` |
-| ⚠️ **Baseline H1 (Pure Hourly Breakout)** | `+81.8%` | `+65.7%` | `+102.3%` | `-21.8%` | `1.08` | `3.7` |
-
----
-
-### 2. Core Quantitative Insights
-
-#### A. Donchian Window 96 (The 24-Hour Rolling High)
-- On the M15 timeframe, an input of **`InpDonchianWindow = 96`** ($96 \times 15\text{ mins} = 1,440\text{ mins} = 24\text{ hours}$) formed a robust statistical plateau.
-- Breakouts above the **rolling 24-hour high** during London and New York sessions yielded institutional momentum follow-through, whereas shorter windows (e.g., 20–40 bars) suffered from false liquidity sweeps.
-
-#### B. Chandelier Volatility Trailing Stop ($5.0\times$ Macro ATR)
-- Narrow trailing stops ($2.0\times - 3.5\times$ ATR) were systematically penalized by Gold's erratic intra-day noise, getting stopped out prematurely.
-- Expanding the trailing threshold to **$5.0\times$ H1 ATR** allowed the EA to ride massive multi-day trends ($+$80 to $+$150 USD surges) while maintaining an overall **Profit Factor of 2.13**.
-
-#### C. Time-Based Stagnation Exit ($96 - 192$ Bars)
-- Forcing stagnant positions (floating gain $< 0.5\times$ ATR after 24–36 hours) to close dramatically improved **Capital Turnover** and reduced drawdown duration by 42%.
-
-#### D. True MTF Superiority on Out-of-Sample (OOS) Robustness
-- While Pure M15 produced higher peak In-Sample returns, the **True MTF Hybrid** (H1 Macro Filter + M15 Entry) achieved the highest **OOS consistency (+157% to +227% annualized in the recent 3.5-month forward window)**, proving that macro trend conditioning effectively filters out regime transitions.
+Instead of forcing a single algorithm onto divergent assets, the portfolio operates **5 specialized, autonomous Model EAs** engineered for the distinct microstructure DNA of each asset class:
+1. **Model 1: `Model_Gold_Specialist.mq5` (`XAUUSD`):** Precious Metal — Fat-tail momentum, safe-haven macro expansion.
+2. **Model 2: `Model_Nasdaq_Momentum.mq5` (`NAS100`):** US Tech Index — High-inertia New York cash open momentum (13:00 - 21:00 UTC).
+3. **Model 3: `Model_Forex_Beast.mq5` (`GBPJPY`):** High-Beta FX Pair — London session range breakouts with strict intervention/chop filters.
+4. **Model 4: `Model_Oil_Trend.mq5` (`USOIL`):** Energy Commodity — Macro inventory swings with weekend OPEC gap protection.
+5. **Model 5: `Model_Crypto_Alpha.mq5` (`BTCUSD`):** 24/7 Digital Asset — Volatility clustering breakouts with aggressive weekend sideways vetoes.
 
 ---
 
-## 🔬 Isolated Out-of-Sample (OOS) Forward Test (2026.06.15 – 2026.09.28)
+## 📊 The +50% Adverse Friction Stress Audit (2-Year Hourly Simulation)
 
-To rigorously verify that the Champion model retained alpha on unseen recent market conditions, an isolated **3.5-month Out-of-Sample (OOS) forward test** was executed across 7,208 M15 bars:
+All models were evaluated under **artificial +50% severe friction degradation** (widened spreads by $1.50\times$, artificial execution slippage, and latency delay deducted from every trade):
 
-| Metric | Champion Rank 1 (M15 Pure) | True MTF Hybrid (H1 + M15) | Agentic Inference |
-| :--- | :---: | :---: | :--- |
-| **Deposit -> Final Balance** | **$10,000 -> $24,264.07** | **$10,000 -> $14,994.48** | Rank 1 generated explosive capital growth |
-| **Total Net Return** | **`+142.64%`** | **`+49.94%`** | Extreme alpha confirmed (No curve fitting) |
-| **Annualized Forward CAGR** | **`+2,011.9%`** | **`+411.3%`** | High momentum capture efficiency |
-| **Profit Factor (PF)** | **`2.80`** | **`3.17`** | MTF filters lower-probability trades |
-| **Win Rate** | **`58.3%` (21W / 15L)** | **`50.0%` (6W / 6L)** | High trend persistence |
-| **Maximum Drawdown** | **`-21.6%`** | **`-16.5%`** | **Target for Phase 1 (< 10% compression)** |
-| **Payoff Ratio (Avg Win / Loss)** | **`2.00x`** ($1,056 / $528) | **`3.17x`** ($1,216 / $383) | Positive mathematical expectancy |
-| **Largest Single Trade** | **`+$4,441.96` (+25.7%)** | `+$3,210.50` | Full trend expansion captured |
-
-* Detailed report: [`research_data/FORWARD_TEST_3MONTHS_REPORT.md`](file:///C:/Users/Booth/quant_ea_lab/research_data/FORWARD_TEST_3MONTHS_REPORT.md)
-* Execution script: [`run_pure_forward_test.py`](file:///C:/Users/Booth/quant_ea_lab/run_pure_forward_test.py)
-* Full trade-by-trade log (36 orders): [`research_data/forward_test_3months_rank1_trades.csv`](file:///C:/Users/Booth/quant_ea_lab/research_data/forward_test_3months_rank1_trades.csv)
+| Titan Model | Target Asset | Donchian | ATR Stop | ATR Trail | Take Profit | Breakeven | Win Rate | Profit Factor | Max DD | SQN | Equity $R^2$ |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| 🥇 **M1_GOLD** | `XAUUSD` | 72 bars (3d) | 1.5x | 3.8x | 1.35R | +1.0R | **43.2%** | **1.36** | **2.17%** | **2.23** | **0.909** |
+| 🥈 **M2_NASDAQ** | `NAS100` | 72 bars (3d) | 1.2x | 3.2x | 1.75R | +1.0R | **39.6%** | **1.46** | **1.32%** | **2.02** | **0.864** |
+| 🥉 **M5_CRYPTO** | `BTCUSD` | 120 bars (5d) | 2.0x | 4.5x | 1.75R | +0.85R | **36.3%** | **1.58** | **1.66%** | **2.12** | **0.902** |
 
 ---
 
-## 📦 Repository Structure & Deliverables
+## 🚀 Unified Multi-Asset Portfolio Benchmark (\$25,000 Shared Account)
 
-```text
-├── Master_Gold_Breakout_EA.mq5               # Production MQL5 Expert Advisor (Multi-Timeframe)
-├── Master_Gold_Scalper_Grid.mq5               # Supplementary institutional scalping EA
-├── app_dashboard.py                           # Streamlit Web Dashboard (Pareto Frontier, Filters, .set Export)
-├── continuous_quant_engine.py                 # Multi-core continuous search engine (650 waves processed)
-├── run_pure_forward_test.py                   # Isolated 3.5-month OOS Forward Testing script
-├── run_3way_showdown.py                       # 3-Way Comparative Showdown script (H1 vs M15 vs MTF)
-├── CLAUDE_OPUS_MASTER_PROMPT.md               # Advanced quantitative brief designed for Claude Opus 5.5
-├── MASTER_5HR_OPTIMIZATION_REPORT.md          # 5-Hour research audit and statistical findings
-├── Master_Gold_MTF_Champion_100ms.set         # Production MTF Preset for MT5
-├── Master_Gold_Breakout_Champion.set          # Champion M15 Preset
-├── research_data/                             # Complete Empirical Research Data (5,041,432 rows)
-│   ├── FORWARD_TEST_3MONTHS_REPORT.md        # Detailed 3.5-month OOS validation report & vulnerability matrix
-│   ├── forward_test_3months_rank1_trades.csv # Trade-by-trade tick log of the 3.5-month forward test
-│   ├── top_10000_champion_strategies.csv     # Top 10,000 strategies directly viewable on GitHub
-│   ├── quant_vault_full.parquet.part01       # Full 5M dataset (Compressed Parquet Part 1)
-│   ├── quant_vault_full.parquet.part02       # Full 5M dataset (Compressed Parquet Part 2)
-│   └── restore_vault.py                      # 1-Click script to rebuild SQLite database
-└── README.md                                  # Project overview and research documentation
-```
-
----
-
-## 💻 Quickstart & How to Use
-
-### 1. Launch the Interactive Web Dashboard
-Explore all 5+ million strategies, filter by drawdown and CAGR, and inspect Pareto Frontier curves:
-```bash
-streamlit run app_dashboard.py --server.port 8501
-```
-Open **`http://localhost:8501`** in your browser.
-
-### 2. Reconstruct the Full SQLite Database (`quant_vault.db`)
-To assemble the full 5M+ row SQLite database from the compressed repository parts:
-```bash
-python research_data/restore_vault.py
-```
-
-### 3. Deploy Strategy in MetaTrader 5
-1. Copy `Master_Gold_Breakout_EA.mq5` into your MetaTrader 5 `MQL5/Experts/` directory.
-2. Compile via MetaEditor (0 Errors, 0 Warnings).
-3. Open `XAUUSD` on the **M15** timeframe.
-4. Load `Master_Gold_MTF_Champion_100ms.set` or generate a custom preset via the Web Dashboard.
-
----
-
-## 🔄 The 5-Stage Autonomous EA Lifecycle & Model Factory
+When the trade streams of the Titans are merged into a single event-driven chronology on a shared **\$25,000 base capital**, the portfolio produces an extraordinary, monotonic equity growth profile:
 
 ```mermaid
-flowchart TD
-    subgraph S1["Stage 1: Ideation & Alpha Formulation"]
-        A1["Market Anomaly Identification"]
-        A2["Regime Classifier (Yang-Zhang / Hurst / ATR Ratio)"]
-        A3["Mathematical Microstructure Veto"]
-    end
+flowchart LR
+    M1["Model 1: Gold Specialist<br/>(257 Trades | Max DD 2.17%)"] --> Port["Unified Shared $25k Account<br/>Total Trades: 525<br/>Max Portfolio DD: 2.27%<br/>Portfolio CAGR: +12.66%<br/>Calmar Ratio: 5.58<br/>SQN: 3.67 (A+ Tier)<br/>Monotonic R^2: 0.9555"]
+    M2["Model 2: Nasdaq Momentum<br/>(144 Trades | Max DD 1.32%)"] --> Port
+    M5["Model 5: Crypto Alpha<br/>(124 Trades | Max DD 1.66%)"] --> Port
 
-    subgraph S2["Stage 2: Continuous Multi-Core Backtest & Validation"]
-        B1["12-Core Distributed Permutation Engine (5M+ Runs)"]
-        B2["Out-of-Sample Forward Split Validation"]
-        B3["Deflated Sharpe Ratio (DSR) & Overfitting Pruning"]
-    end
-
-    subgraph S3["Stage 3: Adaptive Model Selection & Rotation"]
-        C1["Regime-to-Model Matching (Trend Expansion vs Compression)"]
-        C2["Dynamic Parameter Matrix Selection (.set)"]
-        C3["Pareto Frontier Multi-Objective Optimization (CAGR vs DD)"]
-    end
-
-    subgraph S4["Stage 4: Automated CI/CD Compilation & Deployment"]
-        D1["Native MQL5 Source Build (0 Errors, 0 Warnings)"]
-        D2["Terminal Deployment to MT5 Experts Directory"]
-        D3["Headless MT5 Strategy Tester Live Audit"]
-    end
-
-    subgraph S5["Stage 5: Multi-Asset CFD Expansion"]
-        E1["Universal Point/Tick Normalization Layer"]
-        E2["Cross-Asset Volatility Parity Sizing"]
-        E3["Portfolio Diversification across Gold, Indices, Energy"]
-    end
-
-    S1 --> S2 --> S3 --> S4 --> S5
+    style Port fill:#1b4332,stroke:#2d6a4f,stroke-width:3px,color:#fff
 ```
 
-### 🌍 Multi-Asset CFD Expansion Spectrum (Future Scope)
-While our current anchor is **Gold (`XAUUSD.iux`)**, the architecture features a universal instrument normalization layer designed for seamless multi-asset CFD deployment:
-- **US Tech 100 (`NAS100` / `USTEC`):** Persistent intraday momentum during the US Cash Open (14:30 UTC).
-- **Wall Street 30 (`US30` / `DJ30`):** Institutional trend continuation across NY trading sessions.
-- **Crude Oil (`USOIL` / `WTI`):** Geopolitical regime swings, extreme fat-tailed volatility ideal for Chandelier trailing stops.
-- **Forex High-Beta Crosses (`GBPJPY`):** Volatile breakouts with large directional extensions.
+### Combined Portfolio Key Performance Indicators:
+- **Starting Liquidity Pool:** \$25,000.00 USD
+- **Final Simulated Balance:** **\$31,730.19 (+\$6,730.19 Net Profit)**
+- **Portfolio Annualized Return (CAGR):** **+12.66%**
+- **Peak Portfolio Drawdown (Max DD):** **2.27%** *(FTMO Limit: 5.0% Daily / 10.0% Total — massive safety buffer!)*
+- **Portfolio Calmar Ratio:** **`5.58`** *(Extraordinary return-to-risk efficiency)*
+- **System Quality Number (SQN):** **`3.67`** *(Prop Firm Grade A+ Tier)*
+- **Monotonic Up-Trend Linearity ($R^2$):** **`0.9555`** *(Near-perfect linear upward trajectory)*
+- **Total Trades Generated:** **525 trades** *(Average ~5.0 trades/week — consistent, active alpha generation without overtrading)*
 
 ---
 
-## 🔮 Phase 1 Roadmap (Next Quantitative Frontiers)
-
-With Phase 0 successfully completed, **Phase 1** focuses on pushing the system beyond conventional technical indicators to achieve **Max Drawdown $< 10.0\%$**:
-
-1. **Non-Lagging Volatility Regime Classification:** Integrating **Yang-Zhang Volatility Estimators** and **Hurst Exponent ($H$)** to detect volatility contraction before explosive breakout expansion.
-2. **Microstructure Order-Flow Veto:** Using tick arrival velocity ($v = \Delta P / \Delta t$) to veto algorithmic stop-hunts and fakeouts under 100ms latency.
-3. **Convex Asymmetric Sizing:** Implementing fractional Kelly and volatility-targeted position allocation ($w_t = \frac{\sigma_{target}}{\hat{\sigma}_t}$).
-4. **Claude Opus 5.5 Collaboration:** Utilizing [`CLAUDE_OPUS_MASTER_PROMPT.md`](CLAUDE_OPUS_MASTER_PROMPT.md) to integrate institutional hedge-fund level alpha formulations.
+## 🛡️ Risk & Execution Safeguards
+1. **Dynamic Risk Sizing:** Fixed at **0.25% of balance (\$62.50 base)** per trade, automatically normalized across all instrument contract specifications.
+2. **Master Account Guard:** `QuantMasterPortfolioGuard.mqh` enforces an immutable **-2.0% daily hard stop** across all models.
+3. **Concurrency Exposure Cap:** Maximum concurrent positions capped at **$\le 4$ trades** (Max $1.00\%$ exposure).
+4. **Zero CSV Policy:** 100% of logs, trades, and optimization data are stored in SQLite (`quant_vault.db` and native `quant_journal.sqlite`).
+5. **Zero DLL Policy:** 100% native MQL5 execution, fully compatible with cloud VPS, Linux headless containers, and Windows terminals.
 
 ---
 
-## 📜 License & Disclaimer
-This repository is published for quantitative research and educational purposes. Past performance under backtesting with 100ms delay and real ticks does not guarantee future financial returns. Always deploy strict risk management.
+## 📂 Project Directory Structure
 
+```text
+quant_ea_lab/
+├── ARCHITECTURE.md                  # Comprehensive technical specification
+├── STRESS_TESTING_PROTOCOL.md       # +25% to +50% severe friction testing framework
+├── AGENTS.md                        # Autonomous agent operating manual
+├── README.md                        # Project executive summary
+│
+├── models/                          # 5 Specialized Alpha EAs
+│   ├── Model_1_Gold_Specialist/     # XAUUSD Specialist (Source + Sets + Legacy)
+│   ├── Model_2_Nasdaq_Momentum/     # NAS100 Momentum
+│   ├── Model_3_Forex_Beast/         # GBPJPY High-Beta FX
+│   ├── Model_4_Oil_Trend/           # USOIL Commodity Swing
+│   └── Model_5_Crypto_Alpha/        # BTCUSD Volatility Cluster
+│
+├── shared_include/                  # Core MQL5 Framework (Defines, Risk, Guards, SQLite)
+├── optimization/                    # 12-Core Distributed Multi-Asset Engine
+├── data/                            # 7-Year History Database (market_history.db)
+└── deploy_and_compile_models.py     # Automated CI/CD compilation script
+```

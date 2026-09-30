@@ -1,0 +1,15 @@
+; Auto-Generated Champion Preset for Nasdaq Momentum (NAS100)
+; Stress-Tested with +50% Adverse Friction (Spread + Slippage)
+InpMagicNumber=100201
+InpTradeComment=M2_NASDAQ
+InpRiskPct=0.25
+InpAccountBasePool=25000.0
+InpDonchianWindow=72
+InpATRStopMult=1.2
+InpATRTrailMult=3.2
+InpTP_R=1.75
+InpBE_R=1.0
+InpMinKER=0.38
+InpUseSessionFilter=1
+InpStartHourUTC=13
+InpEndHourUTC=21

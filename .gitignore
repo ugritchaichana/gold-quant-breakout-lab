@@ -20,6 +20,13 @@ data/
 *.tmp
 *.bak
 
+# Backups and Local Clones
+research_data_backup_pristine/
+gold-phase1-advisory/
+gold-quant-breakout-lab/
+gold-quant-breakout-lab-fix/
+scratch/
+
 # OS
 Thumbs.db
 .DS_Store

@@ -1,0 +1,8 @@
+; Auto-Discovered Champion Preset from Continuous Multi-Core Engine
+; Timeframe: M15
+InpDonchianWindow=104
+InpATRTrailMult=5.0
+InpATRStopMult=1.3
+InpRiskPercent=3.0
+InpMinADX=20.0
+InpMaxBarsHold=192

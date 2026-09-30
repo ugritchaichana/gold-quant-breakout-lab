@@ -1,0 +1,15 @@
+; Auto-Generated Champion Preset for Gold Specialist (XAUUSD)
+; Stress-Tested with +50% Adverse Friction (Spread + Slippage)
+InpMagicNumber=100101
+InpTradeComment=M1_GOLD
+InpRiskPct=0.25
+InpAccountBasePool=25000.0
+InpDonchianWindow=72
+InpATRStopMult=1.5
+InpATRTrailMult=3.8
+InpTP_R=1.35
+InpBE_R=1.0
+InpMinKER=0.28
+InpUseSessionFilter=0
+InpStartHourUTC=0
+InpEndHourUTC=23

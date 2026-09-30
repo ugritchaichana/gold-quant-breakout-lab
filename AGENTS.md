@@ -8,33 +8,30 @@
 ## 1. REPOSITORY CORE METADATA & MASTER VISION
 ```yaml
 project_name: "gold-quant-breakout-lab"
-primary_asset: "XAUUSD.iux" (Spot Gold / CFD)
-future_cfd_assets: ["NAS100", "US30", "USOIL", "GBPJPY"]
+primary_asset: "XAUUSD" (Precious Metal)
+the_5_specialized_assets: ["XAUUSD", "NAS100", "GBPJPY", "USOIL", "BTCUSD"]
 target_environment: "MetaTrader 5 (MQL5) Build 4000+"
-long_term_vision: >
-  Build a 100% autonomous, end-to-end quantitative EA lifecycle platform.
-  Continuously research, stress-test, and dynamically rotate the optimal trading model
-  tailored to the prevailing market regime. Focus first on Gold (XAUUSD), then expand
-  to trend-friendly, high-volatility CFD instruments.
-testing_horizon:
-  start_date: "2025.08.20"
-  end_date: "2026.09.28"
-  in_sample_window: "2025.08.20 to 2026.06.15"
-  out_of_sample_window: "2026.06.15 to 2026.09.28"
-immutable_constraints:
-  broker_latency: "100ms artificial delay"
-  tick_modelling: "Every tick based on real ticks"
-  spread_ceiling_usd: 0.60
-  circuit_breakers:
-    tier1_drawdown_percent: 5.0  # Cut lot size by 50%
-    tier2_drawdown_percent: 10.0 # Liquidate open positions
-    tier3_drawdown_percent: 15.0 # Emergency shutdown / freeze
+account_architecture: "Single Shared Account ($25,000 Pool, Risk 0.25% per trade, Max Concurrent Risk <= 1.25%)"
+master_mandate: >
+  Build 5 dedicated specialized Model EAs engineered specifically for each asset's unique DNA.
+  Execute a disciplined sequential roadmap: Perfect ONE asset at a time (1M -> 4M -> 1Y -> 10Y -> Forward Test -> Deploy)
+  before researching the next asset. Conclude with all 5 Model EAs cooperating seamlessly in 1 account.
+core_invariants:
+  equity_curve: "Must be a monotonically increasing UP-TREND across all horizons; drawdown > 2 weeks strictly prohibited"
+  trade_frequency: "Active trading frequency; no prolonged multi-week dormancy"
+  risk_per_trade: "0.25% of balance ($62.50 on $25,000 base) with unclamped 0.01 lot minimum execution"
+  execution_mode: "Hybrid Breakout + Trend Following (Both BUY and SELL)"
+  directional_state_machine: "Single-side persistence; flip only on loss + confirmed macro trend transition"
+  min_reward_risk: "1:1.25 to 1:1.50 Take Profit with fast breakeven at +0.85R to bank alpha consistently"
+  anti_sideway_veto: "Kaufman Efficiency Ratio (KER >= 0.35); strict 100% cash veto in choppy regimes"
+  database_policy: "100% Pure SQLite (quant_vault.db & quant_journal.sqlite); ZERO CSV Policy"
 milestone_state:
-  phase_0: "COMPLETED (Setup, 12-Core Multi-TF Ingestion, 5.04M Combinations Baseline, SQLite Vault, Dashboard)"
-  phase_1: "ACTIVE (Alpha Engineering, False-Breakout Vetoes, Drawdown Compression < 10% with Claude Opus 5.5)"
-  phase_2: "PLANNED (Adaptive Regime Routing & Dynamic Walk-Forward Model Rotation)"
-  phase_3: "PLANNED (Automated CI/CD Compilation, MT5 Deployment & Live Execution Sync)"
-  phase_4: "PLANNED (Multi-Asset CFD Expansion: NAS100, USOIL, US30)"
+  step_1_active: "Model 1: Model_Gold_Specialist (Range 1M Equity Uptrend Proof-of-Concept)"
+  step_2_planned: "Model 1: Range 4M (Quarterly Robustness Verification)"
+  step_3_planned: "Model 1: Range 1Y (Annual Stability, Calmar/SQN A+ Tier)"
+  step_4_planned: "Model 1: Range 10Y (Multi-Regime Stress Test 2016-2026)"
+  step_5_planned: "Sequential Expansion to Model 2 (NAS100), Model 3 (GBPJPY), Model 4 (USOIL), Model 5 (BTCUSD)"
+  step_6_planned: "Unified 5-Model Concurrent Live Deployment on Single $25,000 Account"
 ```
 
 ---
@@ -162,7 +159,19 @@ double CalculateNormalizedRiskLots(string symbol, double risk_usd, double sl_dis
 
 ## 6. INSTRUCTIONS FOR INCOMING AI AGENTS (HOW TO EXECUTE)
 
-1. **Phase 1 Objective:** Reduce Max Drawdown from current $18-20\%$ down to **$< 10.0\%$** while sustaining **CAGR $> 180\%$**.
-2. **Deterministic Reproducibility:** Every backtest must use the locked 1-year window (`2025.08.20 - 2026.09.28`), 100ms broker delay, and real ticks.
-3. **Zero DLL Policy:** Maintain 100% native MQL5 execution for universal VPS and cloud compatibility.
-4. **Adaptive Rotation Design:** When introducing new models, ensure parameter schemas allow dynamic switching based on market regime detection.
+1. **Sequential 5-Asset Mastery:** Focus 100% compute on perfecting ONE asset at a time.
+   - Current Target: `Model 1: Model_Gold_Specialist.mq5` (Gold Spot XAUUSD).
+   - Milestone Progression: 1M Range (Uptrend POC) -> 4M Range (Quarterly Robustness) -> 1Y Range (Calmar/SQN A+) -> 10Y Range (Stress Test) -> Live Forward Audit.
+   - Once certified, proceed to `Model 2: NAS100`, `Model 3: GBPJPY`, `Model 4: USOIL`, `Model 5: BTCUSD`.
+2. **Capital Allocation Policy ($25,000 Shared Risk Pool):**
+   - DO NOT fragment the $25,000 into $5,000 silos.
+   - Run all 5 specialized models on ONE single account using a Shared Liquidity Pool.
+   - Each model sizes risk dynamically at `0.25%` ($62.50 per trade) of the total account balance.
+   - Max concurrent portfolio exposure is capped at $\le 1.25\%$ (5 open trades maximum), leaving a massive $3.75\%$ safety buffer before FTMO's $5.0\%$ daily loss limit.
+3. **Core Alpha Mandates:**
+   - Directional State Machine: Trade one side at a time; flip only on verified loss + confirmed EMA cross.
+   - High Win-Rate Alpha Banking: Min RR = 1:1.25 to 1:1.50 Take Profit with fast breakeven lock at $+0.85R$.
+   - Anti-Sideway Protection: Kaufman Efficiency Ratio ($KER \ge 0.35$) mandatory entry veto.
+4. **Zero CSV Policy:**
+   - All optimizations, genetic sweeps, and trade logs must use SQLite (`quant_vault.db` and native MQL5 `quant_journal.sqlite`).
+5. **Zero DLL Policy:** Maintain 100% native MQL5 execution for universal cloud/VPS compatibility.
