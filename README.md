@@ -8,6 +8,7 @@
 [![Architecture](https://img.shields.io/badge/Architecture-Modular%20Domain%20Driven-blueviolet?style=for-the-badge)](ARCHITECTURE.md)
 [![Stress Test](https://img.shields.io/badge/Stress%20Audit-+50%25%20Friction%20Passed-orange?style=for-the-badge)](STRESS_TESTING_PROTOCOL.md)
 [![Feasibility Audit](https://img.shields.io/badge/Feasibility-VPS%20vs%20DCA%20Audited-gold?style=for-the-badge)](FEASIBILITY_ANALYSIS.md)
+[![Long-Term Goal](https://img.shields.io/badge/Roadmap-4--Stage%20Master%20Goal-purple?style=for-the-badge)](MASTER_ROADMAP_AND_GOAL.md)
 
 ---
 
@@ -116,6 +117,7 @@ quant_ea_lab/
 ├── ARCHITECTURE.md                  # Comprehensive technical specification
 ├── STRESS_TESTING_PROTOCOL.md       # +25% to +50% severe friction testing framework
 ├── FEASIBILITY_ANALYSIS.md          # 24/7 EA + VPS vs Passive DCA Feasibility Audit
+├── MASTER_ROADMAP_AND_GOAL.md       # The 4-Stage Master Roadmap & 200+ Fleet Swarm Goal
 ├── AGENTS.md                        # Autonomous agent operating manual
 ├── README.md                        # Project executive summary
 ├── app_dashboard.py                 # Advanced Streamlit & Plotly Research Dashboard

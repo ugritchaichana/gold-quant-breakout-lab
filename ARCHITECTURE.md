@@ -40,6 +40,9 @@ flowchart TD
     SharedLiquidity --> MonotonicEquity["Combined Monotonic Up-Trend Equity Curve (R^2 >= 0.95)"]
 ```
 
+> 📖 **Long-Term Scaling Roadmap:**  
+> For the long-term strategic vision (From Stage 1 Local High-Ping Soak Test to 200+ Account Autonomous Multi-Agent Swarm with IaC), refer to [MASTER_ROADMAP_AND_GOAL.md](MASTER_ROADMAP_AND_GOAL.md).
+
 ---
 
 ## 2. Directory Structure & Modular Separation
