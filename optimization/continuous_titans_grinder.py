@@ -15,6 +15,18 @@ import numpy as np
 import pandas as pd
 from datetime import datetime
 
+# Enforce UTF-8 on Windows consoles to prevent cp874/cp1252 charmap crashes
+if sys.stdout and hasattr(sys.stdout, 'reconfigure'):
+    try:
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    except Exception:
+        pass
+if sys.stderr and hasattr(sys.stderr, 'reconfigure'):
+    try:
+        sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+    except Exception:
+        pass
+
 WORKSPACE_DIR = r"C:\Users\Booth\quant_ea_lab"
 DB_PATH = os.path.join(WORKSPACE_DIR, "quant_vault.db")
 MARKET_DB = os.path.join(WORKSPACE_DIR, "data", "market_history.db")
@@ -449,7 +461,7 @@ def run_continuous_grinder():
                 if is_improved:
                     champions[mod_id] = top_candidate
                     export_preset_if_champion(cfg, top_candidate)
-                    print(f"  ⭐ NEW ALL-TIME CHAMPION FOR {mod_id}!")
+                    print(f"  [*** NEW ALL-TIME CHAMPION FOR {mod_id} ***]")
                     print(f"     Don:{top_candidate['donchian']} | SL:{top_candidate['atr_stop']} | Trail:{top_candidate['atr_trail']} | TP:{top_candidate['tp_r']}R | BE:{top_candidate['be_r']} | KER:{top_candidate['min_ker']}")
                     print(f"     WR:{top_candidate['win_rate']:.1f}% | PF:{top_candidate['profit_factor']:.2f} | Max DD:{top_candidate['max_dd_pct']:.2f}% | SQN:{top_candidate['sqn']:.2f} | R2:{top_candidate['equity_r2']:.3f}")
                 else:
