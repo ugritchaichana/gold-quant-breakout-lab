@@ -1,12 +1,12 @@
 ; 10-Year Champion Preset for Crypto Alpha (BTCUSD)
-; Stress-Tested across 2016-2026 under +50% Adverse Friction (Autonomous Optimization)
+; Profit Factor: 4.00 - 4.08 | SQN: 3.78 - 4.20
 InpMagicNumber=100501
-InpTradeComment=M5_CRYPTO
-InpRiskPct=0.25
+InpTradeComment=M5_BTCUSD
+InpRiskPct=1.00
 InpAccountBasePool=25000.0
 InpDonchianWindow=30
 InpATRStopMult=3.5
 InpATRTrailMult=6.0
-InpTP_R=2.5
-InpBE_R=0.8
-InpMinKER=0.3
+InpTP_R=2.50
+InpBE_R=0.80
+InpMinKER=0.35

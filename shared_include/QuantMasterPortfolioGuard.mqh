@@ -133,11 +133,61 @@ public:
       return CIRCUIT_NORMAL;
    }
 
-   //--- Veto new trades if total open trades across all 5 models >= 4 (Max concurrent risk <= 1.0%)
-   bool CanOpenNewPosition()
+   //--- Server Rollover Spread Window Check (Midnight Blackout)
+   bool IsRolloverWindow()
+   {
+      MqlDateTime dt;
+      TimeToStruct(TimeCurrent(), dt);
+      if((dt.hour == ROLLOVER_BLACKOUT_START_HOUR && dt.min >= ROLLOVER_BLACKOUT_START_MIN) ||
+         (dt.hour == ROLLOVER_BLACKOUT_END_HOUR && dt.min <= ROLLOVER_BLACKOUT_END_MIN))
+      {
+         return true; // Inside rollover blackout window!
+      }
+      return false;
+   }
+
+   //--- Veto new trades if circuit tripped, inside rollover window, max trades exceeded, or correlation clash
+   bool CanOpenNewPosition(string symbol = "", ENUM_SIGNAL_DIR dir = SIGNAL_NONE)
    {
       if(m_circuit_tripped) return false;
-      if(PositionsTotal() >= 4) return false; // Prevent correlation crash
+      if(IsRolloverWindow()) return false;
+      if(PositionsTotal() >= 4) return false;
+
+      // Dynamic Cross-Asset Correlation Guard
+      if(symbol != "" && dir != SIGNAL_NONE)
+      {
+         int total = PositionsTotal();
+         for(int i = 0; i < total; i++)
+         {
+            ulong ticket = PositionGetTicket(i);
+            if(ticket == 0) continue;
+            string pos_sym = PositionGetString(POSITION_SYMBOL);
+            ENUM_POSITION_TYPE pos_type = (ENUM_POSITION_TYPE)PositionGetInteger(POSITION_TYPE);
+            ENUM_SIGNAL_DIR pos_dir = (pos_type == POSITION_TYPE_BUY) ? SIGNAL_BUY : SIGNAL_SELL;
+
+            // 1. Tech & Crypto Correlation Guard (NAS100 & BTCUSD)
+            if(((StringFind(symbol, "NAS") >= 0 || StringFind(symbol, "USTEC") >= 0) && StringFind(pos_sym, "BTC") >= 0) ||
+               (StringFind(symbol, "BTC") >= 0 && (StringFind(pos_sym, "NAS") >= 0 || StringFind(pos_sym, "USTEC") >= 0)))
+            {
+               if(dir == pos_dir)
+               {
+                  PrintFormat("[CorrelationGuard] Veto %s %d: Correlated with active %s position!", symbol, dir, pos_sym);
+                  return false;
+               }
+            }
+
+            // 2. Precious Metals & Energy Correlation Guard (XAUUSD & USOIL)
+            if(((StringFind(symbol, "XAU") >= 0 || StringFind(symbol, "GOLD") >= 0) && StringFind(pos_sym, "OIL") >= 0) ||
+               (StringFind(symbol, "OIL") >= 0 && (StringFind(pos_sym, "XAU") >= 0 || StringFind(pos_sym, "GOLD") >= 0)))
+            {
+               if(dir == pos_dir)
+               {
+                  PrintFormat("[CorrelationGuard] Veto %s %d: Correlated with active %s position!", symbol, dir, pos_sym);
+                  return false;
+               }
+            }
+         }
+      }
       return true;
    }
 

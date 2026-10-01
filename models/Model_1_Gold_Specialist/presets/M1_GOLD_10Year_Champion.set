@@ -2,11 +2,11 @@
 ; Stress-Tested across 2016-2026 under +50% Adverse Friction (Autonomous Optimization)
 InpMagicNumber=100101
 InpTradeComment=M1_GOLD
-InpRiskPct=0.25
+InpRiskPct=1.00
 InpAccountBasePool=25000.0
 InpDonchianWindow=40
 InpATRStopMult=1.2
 InpATRTrailMult=2.5
-InpTP_R=1.5
+InpTP_R=1.50
 InpBE_R=0.95
-InpMinKER=0.2
+InpMinKER=0.25

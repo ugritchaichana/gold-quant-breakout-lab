@@ -23,7 +23,7 @@ input ulong             InpMagicNumber       = 100201;         // Magic Number (
 input string            InpTradeComment      = "M2_NAS100";    // Order Comment
 
 input group "=== CAPITAL & RISK MANAGEMENT ==="
-input double            InpRiskPct           = 0.25;           // Risk % per trade (0.25% = $62.50 on $25k)
+input double            InpRiskPct           = 1.00;           // Risk % per trade (1.00% = $250.00 on $25k)
 input double            InpAccountBasePool   = 25000.0;        // Base Account Liquidity Pool ($)
 
 input group "=== TIMEFRAMES & REGIME FILTERS ==="
@@ -194,6 +194,8 @@ void OnTick()
    // --- BUY SIGNAL EVALUATION ---
    if(macro_trend == REGIME_EXPANSION_BULL && last_bar[0].close >= donchian_high)
    {
+      if(!g_portfolio_guard.CanOpenNewPosition(_Symbol, SIGNAL_BUY)) return;
+
       double ask = SymbolInfoDouble(_Symbol, SYMBOL_ASK);
       double sl_dist = InpATRStopMult * current_atr;
       if(sl_dist <= 0.0) return;
@@ -211,6 +213,8 @@ void OnTick()
    // --- SELL SIGNAL EVALUATION ---
    else if(macro_trend == REGIME_EXPANSION_BEAR && last_bar[0].close <= donchian_low)
    {
+      if(!g_portfolio_guard.CanOpenNewPosition(_Symbol, SIGNAL_SELL)) return;
+
       double bid = SymbolInfoDouble(_Symbol, SYMBOL_BID);
       double sl_dist = InpATRStopMult * current_atr;
       if(sl_dist <= 0.0) return;

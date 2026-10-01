@@ -1,12 +1,12 @@
 ; 10-Year Champion Preset for Nasdaq Momentum (NAS100)
 ; Stress-Tested across 2016-2026 under +50% Adverse Friction (Autonomous Optimization)
 InpMagicNumber=100201
-InpTradeComment=M2_NASDAQ
-InpRiskPct=0.25
+InpTradeComment=M2_NAS100
+InpRiskPct=1.00
 InpAccountBasePool=25000.0
-InpDonchianWindow=12
-InpATRStopMult=1.4
+InpDonchianWindow=18
+InpATRStopMult=1.5
 InpATRTrailMult=3.0
-InpTP_R=1.5
-InpBE_R=1.1
-InpMinKER=0.4
+InpTP_R=1.50
+InpBE_R=1.10
+InpMinKER=0.40

@@ -23,23 +23,31 @@ input ulong             InpMagicNumber       = 100401;         // Magic Number (
 input string            InpTradeComment      = "M4_USOIL";     // Order Comment
 
 input group "=== CAPITAL & RISK MANAGEMENT ==="
-input double            InpRiskPct           = 0.25;           // Risk % per trade (0.25% = $62.50 on $25k)
+input double            InpRiskPct           = 1.00;           // Risk % per trade (1.00% = $250.00 on $25k)
 input double            InpAccountBasePool   = 25000.0;        // Base Account Liquidity Pool ($)
 
 input group "=== TIMEFRAMES & REGIME FILTERS ==="
 input ENUM_TIMEFRAMES   InpMacroTF           = PERIOD_H4;      // Macro Compass Timeframe (H4)
 input ENUM_TIMEFRAMES   InpEntryTF           = PERIOD_H1;      // Precision Entry Timeframe (H1)
-input int               InpFastEMA           = 100;            // Macro Fast EMA
-input int               InpSlowEMA           = 200;            // Macro Slow EMA
+input int               InpFastEMA           = 20;             // Macro Fast EMA (Upgraded 20 EMA)
+input int               InpSlowEMA           = 50;             // Macro Slow EMA (Upgraded 50 EMA)
 input int               InpKERPeriod         = 20;             // Kaufman ER Period
-input double            InpMinKER            = 0.35;           // Kaufman ER Min Threshold
+input double            InpMinKER            = 0.15;           // Kaufman ER Min Threshold
 
 input group "=== BREAKOUT & EXECUTION ==="
-input int               InpDonchianWindow    = 48;             // Donchian Breakout Period (48 hours = 2 days)
-input double            InpATRStopMult       = 1.5;            // ATR Multiplier for Stop Loss
-input double            InpTP_R              = 1.50;           // Take Profit R-Multiple (1:1.50)
-input double            InpBE_R              = 0.85;           // Fast Breakeven Trigger R-Multiple (+0.85R)
-input double            InpATRTrailMult      = 3.8;            // ATR Trailing Stop Multiplier (Wider for Oil trends)
+input int               InpDonchianWindow    = 24;             // Donchian Breakout Period (24 bars)
+input double            InpATRStopMult       = 2.2;            // ATR Multiplier for Stop Loss
+input double            InpTP_R              = 1.75;           // Take Profit R-Multiple (1:1.75)
+input double            InpBE_R              = 0.60;           // Fast Breakeven Trigger R-Multiple (+0.60R)
+input double            InpATRTrailMult      = 3.5;            // ATR Trailing Stop Multiplier
+
+input group "=== RSI MOMENTUM FILTER ==="
+input bool              InpUseRSIFilter      = true;           // Enable RSI Momentum Filter
+input int               InpRSIPeriod         = 14;             // RSI Period
+input double            InpRSILongMin        = 48.0;           // RSI Min for Longs
+input double            InpRSILongMax        = 75.0;           // RSI Max for Longs
+input double            InpRSIShortMax       = 52.0;           // RSI Max for Shorts
+input double            InpRSIShortMin       = 25.0;           // RSI Min for Shorts
 
 input group "=== WEEKEND OPEC GAP PROTECTION ==="
 input bool              InpNoFridayLateEntry = true;           // Prevent opening new trades Friday evening (after 18:00 UTC)
@@ -51,6 +59,7 @@ CQuantMasterPortfolioGuard   g_portfolio_guard;
 int                          g_hFastEMA = INVALID_HANDLE;
 int                          g_hSlowEMA = INVALID_HANDLE;
 int                          g_hATR     = INVALID_HANDLE;
+int                          g_hRSI     = INVALID_HANDLE;
 datetime                     g_last_bar_time = 0;
 double                       g_last_r_dist   = 0.0;
 
@@ -65,8 +74,9 @@ int OnInit()
    g_hFastEMA = iMA(_Symbol, InpMacroTF, InpFastEMA, 0, MODE_EMA, PRICE_CLOSE);
    g_hSlowEMA = iMA(_Symbol, InpMacroTF, InpSlowEMA, 0, MODE_EMA, PRICE_CLOSE);
    g_hATR     = iATR(_Symbol, InpEntryTF, 14);
+   g_hRSI     = iRSI(_Symbol, InpEntryTF, InpRSIPeriod, PRICE_CLOSE);
 
-   if(g_hFastEMA == INVALID_HANDLE || g_hSlowEMA == INVALID_HANDLE || g_hATR == INVALID_HANDLE)
+   if(g_hFastEMA == INVALID_HANDLE || g_hSlowEMA == INVALID_HANDLE || g_hATR == INVALID_HANDLE || g_hRSI == INVALID_HANDLE)
    {
       Print("[Model_Oil_Trend] Failed to initialize indicator handles!");
       return INIT_FAILED;
@@ -85,6 +95,7 @@ void OnDeinit(const int reason)
    if(g_hFastEMA != INVALID_HANDLE) IndicatorRelease(g_hFastEMA);
    if(g_hSlowEMA != INVALID_HANDLE) IndicatorRelease(g_hSlowEMA);
    if(g_hATR != INVALID_HANDLE)     IndicatorRelease(g_hATR);
+   if(g_hRSI != INVALID_HANDLE)     IndicatorRelease(g_hRSI);
 }
 
 //+------------------------------------------------------------------+
@@ -161,7 +172,7 @@ void OnTick()
    if(HasActivePosition()) return;
 
    // 6. Concurrency Check: Ensure account has capacity
-   if(!g_portfolio_guard.CanOpenNewPosition()) return;
+   if(!g_portfolio_guard.CanOpenNewPosition(_Symbol, SIGNAL_NONE)) return;
 
    // 7. Friday Evening Gap Filter
    if(!IsAllowedDayAndTime()) return;
@@ -174,10 +185,19 @@ void OnTick()
    double ker = CQuantRegimeFilter::CalculateKER(_Symbol, InpEntryTF, InpKERPeriod);
    if(ker < InpMinKER) return;
 
-   // 10. Macro Trend Filter (H4 Dual EMA)
+   // 10. Fetch current RSI value
+   double current_rsi = 50.0;
+   if(InpUseRSIFilter)
+   {
+      double rsi_val[1];
+      if(CopyBuffer(g_hRSI, 0, 1, 1, rsi_val) <= 0) return;
+      current_rsi = rsi_val[0];
+   }
+
+   // 11. Macro Trend Filter (H4 Dual EMA)
    ENUM_REGIME_TYPE macro_trend = CQuantRegimeFilter::GetMacroTrend(g_hFastEMA, g_hSlowEMA, _Symbol, InpMacroTF);
 
-   // 11. Donchian Breakout Channel on H1
+   // 12. Donchian Breakout Channel on H1
    double donchian_high = 0.0, donchian_low = 0.0;
    if(!GetDonchianChannel(InpDonchianWindow, donchian_high, donchian_low)) return;
 
@@ -192,6 +212,9 @@ void OnTick()
    // --- BUY SIGNAL EVALUATION ---
    if(macro_trend == REGIME_EXPANSION_BULL && last_bar[0].close >= donchian_high)
    {
+      if(InpUseRSIFilter && (current_rsi < InpRSILongMin || current_rsi > InpRSILongMax)) return;
+      if(!g_portfolio_guard.CanOpenNewPosition(_Symbol, SIGNAL_BUY)) return;
+
       double ask = SymbolInfoDouble(_Symbol, SYMBOL_ASK);
       double sl_dist = InpATRStopMult * current_atr;
       if(sl_dist <= 0.0) return;
@@ -203,12 +226,15 @@ void OnTick()
       if(lots > 0.0 && g_pos_mgr.OpenBuy(_Symbol, lots, sl_price, tp_price, InpTradeComment))
       {
          g_last_r_dist = sl_dist;
-         g_portfolio_guard.LogEvent(_Symbol, "ENTRY_BUY", StringFormat("Lots=%.2f, Ask=%.2f, SL=%.2f, TP=%.2f", lots, ask, sl_price, tp_price));
+         g_portfolio_guard.LogEvent(_Symbol, "ENTRY_BUY", StringFormat("Lots=%.2f, Ask=%.2f, SL=%.2f, TP=%.2f, RSI=%.1f", lots, ask, sl_price, tp_price, current_rsi));
       }
    }
    // --- SELL SIGNAL EVALUATION ---
    else if(macro_trend == REGIME_EXPANSION_BEAR && last_bar[0].close <= donchian_low)
    {
+      if(InpUseRSIFilter && (current_rsi > InpRSIShortMax || current_rsi < InpRSIShortMin)) return;
+      if(!g_portfolio_guard.CanOpenNewPosition(_Symbol, SIGNAL_SELL)) return;
+
       double bid = SymbolInfoDouble(_Symbol, SYMBOL_BID);
       double sl_dist = InpATRStopMult * current_atr;
       if(sl_dist <= 0.0) return;
@@ -220,7 +246,7 @@ void OnTick()
       if(lots > 0.0 && g_pos_mgr.OpenSell(_Symbol, lots, sl_price, tp_price, InpTradeComment))
       {
          g_last_r_dist = sl_dist;
-         g_portfolio_guard.LogEvent(_Symbol, "ENTRY_SELL", StringFormat("Lots=%.2f, Bid=%.2f, SL=%.2f, TP=%.2f", lots, bid, sl_price, tp_price));
+         g_portfolio_guard.LogEvent(_Symbol, "ENTRY_SELL", StringFormat("Lots=%.2f, Bid=%.2f, SL=%.2f, TP=%.2f, RSI=%.1f", lots, bid, sl_price, tp_price, current_rsi));
       }
    }
 }
